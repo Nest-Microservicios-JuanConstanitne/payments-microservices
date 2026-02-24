@@ -1,3 +1,4 @@
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { envs } from './config';
@@ -11,7 +12,6 @@ async function bootstrap() {
     rawBody: true
   });
 
-
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -19,6 +19,18 @@ async function bootstrap() {
       transform: true
     })
   );
+
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.NATS,
+    options: {
+      servers: envs.natsServers
+    },
+  }, {
+    inheritAppConfig: true
+  });
+
+  // Creamos una aplicacion hibrida SERVER NATS RES API
+  await app.startAllMicroservices();
 
   await app.listen(envs.port);
 

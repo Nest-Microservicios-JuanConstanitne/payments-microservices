@@ -1,5 +1,5 @@
 # Dependencias
-FROM node:21-alpine3.19 as deps
+FROM node:22-alpine as deps
 
 WORKDIR /usr/src/app
 
@@ -9,7 +9,7 @@ COPY package-lock.json ./
 RUN npm install
 
 # Builder - Construye la aplicación
-FROM node:21-alpine3.19 as build
+FROM node:22-alpine as build
 
 WORKDIR /usr/src/app
 
@@ -27,7 +27,7 @@ RUN npm ci -f --only=production && npm cache clean --force
 
 
 # Crear la imagen final de Docker
-FROM node:21-alpine3.19 as prod
+FROM node:22-alpine as prod
 
 WORKDIR /usr/src/app
 
